@@ -7,18 +7,22 @@ import { Lesson } from './lesson/lesson.entity';
 import { ConfigModule } from '@nestjs/config';
 import { StudentModule } from './student/student.module';
 import { Student } from './student/student.entity';
+import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
+import { User } from './user/entities/user.entity';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.development.env',
+      envFilePath: ['.development.env', '.env'],
+      isGlobal: true,
     }),
     TypeOrmModule.forRoot({
       type: 'mongodb',
       url: process.env.DB_URI,
       synchronize: true,
       useUnifiedTopology: true,
-      entities: [Lesson, Student],
+      entities: [Lesson, Student, User],
     }),
     GraphQLModule.forRoot({
       autoSchemaFile: true,
@@ -26,6 +30,8 @@ import { Student } from './student/student.entity';
     }),
     LessonModule,
     StudentModule,
+    UserModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
