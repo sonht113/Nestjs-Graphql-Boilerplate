@@ -10,6 +10,7 @@ import { Student } from './student/student.entity';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { User } from './user/entities/user.entity';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { User } from './user/entities/user.entity';
     StudentModule,
     UserModule,
     AuthModule,
+    UploadModule,
   ],
   controllers: [],
   providers: [],
