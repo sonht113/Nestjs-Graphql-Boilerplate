@@ -3,19 +3,19 @@ import { UserDto } from './dto/user.dto';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Resolver(() => UserDto)
 export class UserResolver {
   constructor(private userService: UserService) {}
 
-  @Query(() => [UserDto])
+  @Query(() => [UserDto], { name: 'users' })
   @UseGuards(JwtAuthGuard)
   users() {
     return this.userService.getUsers();
   }
 
-  @Query(() => UserDto)
+  @Query(() => UserDto, { name: 'user' })
   @UseGuards(JwtAuthGuard)
   user(@Args('username') username: string) {
     return this.userService.getUser(username);

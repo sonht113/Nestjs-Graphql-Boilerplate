@@ -13,11 +13,8 @@ export class AuthResolver {
 
   @Mutation(() => LoginResponseDto)
   @UseGuards(GqlAuthGuard)
-  login(
-    @Args('loginUserInput') loginUserInput: LoginUserInputDto,
-    @Context() context,
-  ) {
-    return this.authService.login(context.user);
+  login(@Args('loginUserInput') loginUserInput: LoginUserInputDto) {
+    return this.authService.login(loginUserInput);
   }
 
   @Mutation(() => UserDto)
