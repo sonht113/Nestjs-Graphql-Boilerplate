@@ -1,27 +1,17 @@
-import { Resolver, Args, Mutation } from '@nestjs/graphql';
-import { createWriteStream } from 'fs';
-import { FileUpload } from './upload.type';
-import { join } from 'path';
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { Resolver, Mutation, Args } from '@nestjs/graphql';
+import * as GraphQLUpload from 'graphql-upload';
+import { FileUpload } from './entities/file.entity';
+import { UploadService } from './upload.service';
+import { UploadFileDto } from './dto/upload.dto';
 
-@Resolver()
+@Resolver(() => UploadFileDto)
 export class UploadResolver {
-  @Mutation(() => Boolean)
-  async uploadFile(image: Promise<FileUpload>) {
-    const { createReadStream, filename } = await image;
-    return new Promise(async (resolve) => {
-      createReadStream()
-        .pipe(
-          createWriteStream(join(process.cwd(), `./src/uploads/${filename}`)),
-        )
-        .on('finish', () =>
-          resolve({
-            image: filename,
-          }),
-        )
-        .on('error', () => {
-          new HttpException('Could not save image', HttpStatus.BAD_REQUEST);
-        });
-    });
+  constructor(private readonly uploadService: UploadService) {}
+  @Mutation(() => String)
+  async uploadFile(
+    @Args({ name: 'file', type: () => GraphQLUpload })
+    file: FileUpload,
+  ) {
+    return await this.uploadService.uploadFile(file);
   }
 }
