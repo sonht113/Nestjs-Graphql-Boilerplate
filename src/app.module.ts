@@ -3,19 +3,14 @@ import { LessonModule } from './lesson/lesson.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import {
-  ApolloServerPluginLandingPageLocalDefault,
-  ApolloServerPluginLandingPageProductionDefault,
-} from '@apollo/server/plugin/landingPage/default';
 import { Lesson } from './lesson/lesson.entity';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { StudentModule } from './student/student.module';
 import { Student } from './student/student.entity';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { User } from './user/entities/user.entity';
 import { UploadModule } from './upload/upload.module';
-import { join } from 'path';
 
 @Module({
   imports: [
@@ -30,23 +25,20 @@ import { join } from 'path';
       useUnifiedTopology: true,
       entities: [Lesson, Student, User],
     }),
-    GraphQLModule.forRoot<ApolloDriverConfig>({
-      autoSchemaFile: join(process.cwd(), 'src/@generated/schema.gql'),
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
-      playground: false,
-      context: ({ req, res }) => ({ req, res }),
-      plugins: [
-        // Install a landing page plugin based on NODE_ENV
-        process.env.NODE_ENV === 'production'
-          ? ApolloServerPluginLandingPageProductionDefault({
-              graphRef: 'my-graph-id@my-graph-variant',
-              footer: false,
-            })
-          : ApolloServerPluginLandingPageLocalDefault({
-              footer: true,
-              includeCookies: true,
-            }),
-      ],
+      useFactory: (configService) => {
+        const playground = configService.get('GRAPHQL_PLAYGROUND');
+        const introspection = configService.get('GRAPHQL_INTROSPECTION');
+        return {
+          autoSchemaFile: 'schema.graphql',
+          sortSchema: true,
+          playground,
+          introspection: playground || introspection,
+        };
+      },
+      inject: [ConfigService],
+      imports: [ConfigModule],
     }),
     LessonModule,
     StudentModule,

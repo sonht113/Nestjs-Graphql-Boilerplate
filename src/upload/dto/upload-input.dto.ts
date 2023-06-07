@@ -1,17 +1,15 @@
-import { Field, ObjectType } from '@nestjs/graphql';
-import { Stream } from 'stream';
+import { GraphQLUpload, Upload } from 'graphql-upload-minimal';
 
-@ObjectType()
-export class UploadFileInputDto {
-  @Field()
-  filename: string;
+import { Field, ArgsType } from '@nestjs/graphql';
 
-  @Field()
-  mimetype: string;
+@ArgsType()
+export class UploadInputDto {
+  @Field(() => GraphQLUpload)
+  file!: Promise<Upload>;
+}
 
-  @Field()
-  encoding: string;
-
-  @Field()
-  createReadStream: () => Stream;
+@ArgsType()
+export class UploadMultipleInputDto {
+  @Field(() => [GraphQLUpload])
+  files!: Promise<[Upload]>;
 }

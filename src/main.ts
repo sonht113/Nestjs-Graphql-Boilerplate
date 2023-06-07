@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import { apolloUploadExpress } from 'apollo-upload-server';
+import { graphqlUploadExpress } from 'graphql-upload-minimal';
 import helmet from 'helmet';
 
 async function bootstrap() {
@@ -16,12 +16,17 @@ async function bootstrap() {
     }),
   );
 
-  app.use(
-    apolloUploadExpress({
-      maxFiles: 10,
-      maxFileSize: 1000000,
-    }),
-  );
+  app.use((req: any, res: any, next: any) => {
+    if (req.url.includes('/graphql')) {
+      // only graphql request
+      graphqlUploadExpress({
+        maxFileSize: 1000000,
+        maxFiles: 10,
+      })(req, res, next);
+    } else {
+      next();
+    }
+  });
 
   app.enableCors({
     origin: true,

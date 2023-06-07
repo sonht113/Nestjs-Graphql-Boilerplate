@@ -1,7 +1,19 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { ObjectType, Field } from '@nestjs/graphql';
 
 @ObjectType()
-export class UploadFileDto {
-  @Field()
-  uploadFile: string;
+export class ResponseSingleUpload {
+  @Field(() => String)
+  url!: string;
+
+  @Field(() => String)
+  format!: string;
+
+  @Field(() => Number)
+  width!: number;
+
+  @Field(() => Number)
+  height!: number;
+
+  @Field(() => Number)
+  bytes!: number;
 }

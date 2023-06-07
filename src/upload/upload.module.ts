@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
 import { UploadResolver } from './upload.resolver';
 import { UploadService } from './upload.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { FileUpload } from './entities/file.entity';
+import { CloudinaryProvider } from './cloudinary.provider';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([FileUpload])],
-  providers: [UploadResolver, UploadService],
+  providers: [UploadResolver, UploadService, CloudinaryProvider],
+  exports: [CloudinaryProvider],
 })
 export class UploadModule {}
