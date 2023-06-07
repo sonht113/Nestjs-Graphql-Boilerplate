@@ -1,17 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { FileUpload } from './entities/file.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { createWriteStream } from 'fs';
+import { GraphQLUpload } from 'apollo-upload-server';
 
 @Injectable()
 export class UploadService {
-  async uploadFile(file: FileUpload): Promise<string> {
+  async uploadFile(file: GraphQLUpload): Promise<string> {
     if (file) {
-      const { filename, mimetype, encoding, createReadStream } = file;
-      const stream = createReadStream();
-      const newFileName = this.concatExtension(filename);
+      // const { filename, mimetype, encoding, createReadStream } = file;
+      // const stream = createReadStream();
+      const newFileName = this.concatExtension(file.filename);
       const upload: Promise<string> = new Promise((resolve, reject) =>
-        stream
+        file
+          .createReadStream()
           .pipe(createWriteStream('./uploads/' + newFileName))
           .on('finish', () => {
             resolve(newFileName);

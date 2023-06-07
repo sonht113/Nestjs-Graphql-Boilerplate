@@ -1,18 +1,17 @@
-import { Field } from '@nestjs/graphql';
 import { Stream } from 'stream';
-import { Entity } from 'typeorm';
+import { Entity, Column } from 'typeorm';
 
 @Entity()
 export class FileUpload {
-  @Field()
+  @Column()
   filename: string;
 
-  @Field()
+  @Column()
   mimetype: string;
 
-  @Field()
+  @Column()
   encoding: string;
 
-  @Field()
+  @Column()
   createReadStream: () => Stream;
 }
