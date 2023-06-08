@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Readable } from 'stream';
 import toStream = require('buffer-to-stream');
 import { v2 } from 'cloudinary';
+import { FileUpload } from 'graphql-upload';
 
 @Injectable()
 export class UploadService {
@@ -11,23 +12,23 @@ export class UploadService {
    * @returns
    */
   // upload single to cloudinary with graphql
-  async uploadSingleToCloudinaryGraphql(args: any): Promise<any> {
-    console.log(args.file);
-    const { createReadStream } = await args.file;
-    const stream = createReadStream();
-    const buffer = await this.streamToBuffer(stream());
-    return this.cloudinary(buffer);
+  async uploadSingleToCloudinaryGraphql(file: FileUpload): Promise<any> {
+    try {
+      const { createReadStream } = await file;
+      const buffer = await this.streamToBuffer(createReadStream());
+      return this.cloudinary(buffer);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   // upload multiple to cloudinary with graphql
-  async uploadMultipleToCloudinaryGraphql(args: any): Promise<any> {
+  async uploadMultipleToCloudinaryGraphql(files: [FileUpload]): Promise<any> {
     try {
       const arrayResponse: any[] = [];
       await Promise.all(
-        args.files.map(async (file: any) => {
-          const result = await this.uploadSingleToCloudinaryGraphql({
-            file: file,
-          });
+        files.map(async (file: FileUpload) => {
+          const result = await this.uploadSingleToCloudinaryGraphql(file);
           arrayResponse.push(result);
         }),
       );

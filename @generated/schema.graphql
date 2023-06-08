@@ -58,11 +58,7 @@ type Query {
 }
 
 type ResponseSingleUpload {
-  bytes: Float!
-  format: String!
-  height: Float!
   url: String!
-  width: Float!
 }
 
 type Student {

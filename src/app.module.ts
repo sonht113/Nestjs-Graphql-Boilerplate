@@ -31,7 +31,7 @@ import { UploadModule } from './upload/upload.module';
         const playground = configService.get('GRAPHQL_PLAYGROUND');
         const introspection = configService.get('GRAPHQL_INTROSPECTION');
         return {
-          autoSchemaFile: 'schema.graphql',
+          autoSchemaFile: '@generated/schema.graphql',
           sortSchema: true,
           playground,
           introspection: playground || introspection,
